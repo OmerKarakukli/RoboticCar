@@ -9,7 +9,7 @@ except Exception as e:
     arduino_Serial = serial.Serial('/dev/ttyACM1', 115200)
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-UDP_address = ("127.0.0.1", 10000)
+UDP_address = ('127.0.0.1', 10000)
 
 try:
     sock.bind(UDP_address)

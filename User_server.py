@@ -11,7 +11,11 @@ except Exception as e:
 
 while True:
     msg, address = sock.recvfrom(1024)
-    sock.sendto(msg, ("127.0.0.1", 10000))
-    arduino_msg, arduino_address = sock.recvfrom(1024)
+    sock.sendto(msg, ('127.0.0.1', 10000))
+    #need to add a verification that the message is from arduino
+    while True:
+        arduino_msg, arduino_address = sock.recvfrom(1024)
+        if arduino_address[1] == 10000:
+            break
     sock.sendto(arduino_msg, address)
 
