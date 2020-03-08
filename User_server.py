@@ -11,6 +11,7 @@ except Exception as e:
 
 while True:
     msg, address = sock.recvfrom(1024)
+    print(msg.decode('utf-8'))
     sock.sendto(msg, ("127.0.0.1", 10000))
     arduino_msg, arduino_address = sock.recvfrom(1024)
     sock.sendto(arduino_msg, address)
