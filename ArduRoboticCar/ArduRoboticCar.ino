@@ -7,8 +7,13 @@
 #define LeftMotDir1 3
 #define LeftMotDir2 2
 
+#define trig 52
+#define echo 53
+
 String serverIn = "";
 bool stringComplete = false;
+
+uint32_t frontDist;
 
 void setup() {
   // put your setup code here, to run once:
@@ -23,20 +28,24 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   analogWrite(RightMotPwm, 0);
   analogWrite(LeftMotPwm, 0);
+  pinMode(trig, OUTPUT);
+  digitalWrite(trig, LOW);
+  pinMode(echo, INPUT);
+  frontDist = 0;
 }
 
 void loop() {
   // put your main code here, to run repeatedly:
-  if (stringComplete){
-    if ((serverIn == "ON") || (serverIn == "on") || (serverIn == "On") ){
+  if (stringComplete) {
+    if ((serverIn == "ON") || (serverIn == "on") || (serverIn == "On") ) {
       Serial.println("Turn On");
-      digitalWrite(ledPin, HIGH); 
+      digitalWrite(ledPin, HIGH);
     }
-    else if ((serverIn == "OFF") || (serverIn == "off") || (serverIn == "Off")){
+    else if ((serverIn == "OFF") || (serverIn == "off") || (serverIn == "Off")) {
       Serial.println("Turn Off");
-      digitalWrite(ledPin, LOW); 
+      digitalWrite(ledPin, LOW);
     }
-    else if ((serverIn == "W") || (serverIn == "w")){
+    else if ((serverIn == "W") || (serverIn == "w")) {
       Serial.println("Go Forward");
       digitalWrite(RightMotDir1, LOW);
       digitalWrite(RightMotDir2, HIGH);
@@ -45,7 +54,7 @@ void loop() {
       analogWrite(RightMotPwm, 255);
       analogWrite(LeftMotPwm, 255);
     }
-    else if ((serverIn == "X") || (serverIn == "x")){
+    else if ((serverIn == "X") || (serverIn == "x")) {
       Serial.println("Go Backward");
       digitalWrite(RightMotDir1, HIGH);
       digitalWrite(RightMotDir2, LOW);
@@ -54,7 +63,7 @@ void loop() {
       analogWrite(RightMotPwm, 255);
       analogWrite(LeftMotPwm, 255);
     }
-    else if ((serverIn == "D") || (serverIn == "d")){
+    else if ((serverIn == "D") || (serverIn == "d")) {
       Serial.println("Tuen Right");
       digitalWrite(RightMotDir1, HIGH);
       digitalWrite(RightMotDir2, LOW);
@@ -63,7 +72,7 @@ void loop() {
       analogWrite(RightMotPwm, 255);
       analogWrite(LeftMotPwm, 255);
     }
-    else if ((serverIn == "A") || (serverIn == "a")){
+    else if ((serverIn == "A") || (serverIn == "a")) {
       Serial.println("Turn Left");
       digitalWrite(RightMotDir1, LOW);
       digitalWrite(RightMotDir2, HIGH);
@@ -72,27 +81,50 @@ void loop() {
       analogWrite(RightMotPwm, 255);
       analogWrite(LeftMotPwm, 255);
     }
-    else if ((serverIn == "S") || (serverIn == "s")){
+    else if ((serverIn == "S") || (serverIn == "s")) {
       Serial.println("Stop");
       analogWrite(RightMotPwm, 0);
       analogWrite(LeftMotPwm, 0);
     }
-    else{
+    else if ((serverIn == "S") || (serverIn == "s")) {
+      Serial.println("Stop");
+      analogWrite(RightMotPwm, 0);
+      analogWrite(LeftMotPwm, 0);
+    }
+    else if (serverIn == "frontDist") {
+      Serial.println(frontDist);
+    }
+    else {
       Serial.println("Unknown command");
     }
     serverIn = "";
-    stringComplete = false; 
+    stringComplete = false;
   }
+
+  updateFrontDist();
+
 }
 
-void serialEvent(){
-  while (Serial.available()){
+void serialEvent() {
+  while (Serial.available()) {
     char inChar = (char)Serial.read();
-    if (inChar == '\n'){
+    if (inChar == '\n') {
       stringComplete = true;
-    }else{
+    } else {
       serverIn += inChar;
     }
     delay(5);
+  }
+}
+
+void updateFrontDist() {
+  digitalWrite(trig, LOW);
+  delayMicroseconds(5);
+  digitalWrite(trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trig, LOW);
+  uint32_t duration = pulseIn(echo, HIGH, 250000);
+  if (duration != 0) {
+    frontDist = duration / 5.831;
   }
 }
