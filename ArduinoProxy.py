@@ -2,6 +2,8 @@ import serial
 from time import sleep
 import socket
 
+state = 'auto'
+
 try:
     arduino_Serial = serial.Serial('/dev/ttyACM0', 115200)
 except Exception as e:
@@ -21,10 +23,29 @@ except Exception as e:
 while True:
     msg, address = sock.recvfrom(1024)
     msg = msg.decode('utf-8')
-    arduino_Serial.write(bytes(msg + '\n', 'utf-8'))
-    arduinoIn = ""
-    sleep(0.1)
-    while arduino_Serial.inWaiting() > 0:
-        arduinoIn = arduino_Serial.readline().strip().decode("ascii")
-        sock.sendto(bytes(arduinoIn, 'utf-8'), address)
+    if msg == 'man':
+        state = 'man'
+    if msg == 'auto':
+        state = 'auto'
+    if state == 'auto':
+        arduino_Serial.write(bytes(msg + '\n', 'utf-8'))
+        arduinoIn = ""
+        sleep(0.1)
+        while arduino_Serial.inWaiting() > 0:
+            arduinoIn = arduino_Serial.readline().strip().decode("ascii")
+            if msg == 'frontDist' and address[1] == 10002:
+                sock.sendto(bytes(arduinoIn, 'utf-8'), address)
+            if address[1] != 10002:
+                sock.sendto(bytes(arduinoIn, 'utf-8'), address)
+    if state == 'man' and address[1] == 10001:
+        arduino_Serial.write(bytes(msg + '\n', 'utf-8'))
+        arduinoIn = ""
+        sleep(0.1)
+        while arduino_Serial.inWaiting() > 0:
+            arduinoIn = arduino_Serial.readline().strip().decode("ascii")
+            if msg == 'frontDist' and address[1] == 10002:
+                sock.sendto(bytes(arduinoIn, 'utf-8'), address)
+            if address[1] != 10002:
+                sock.sendto(bytes(arduinoIn, 'utf-8'), address)
+
 
