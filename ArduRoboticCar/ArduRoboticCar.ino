@@ -92,6 +92,7 @@ void loop() {
       analogWrite(LeftMotPwm, 0);
     }
     else if (serverIn == "frontDist") {
+      updateFrontDist();
       Serial.println(frontDist);
     }
     else {
@@ -100,9 +101,7 @@ void loop() {
     serverIn = "";
     stringComplete = false;
   }
-
-  updateFrontDist();
-
+  //updateFrontDist();
 }
 
 void serialEvent() {
@@ -113,7 +112,7 @@ void serialEvent() {
     } else {
       serverIn += inChar;
     }
-    delay(5);
+    //delay(5);
   }
 }
 

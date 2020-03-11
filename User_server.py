@@ -1,7 +1,7 @@
 import socket
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-UDP_address = ('192.168.1.22', 10001)
+UDP_address = ('192.168.1.23', 10001)
 
 try:
     sock.bind(UDP_address)
