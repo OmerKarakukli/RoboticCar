@@ -17,7 +17,7 @@ UDP_address = ('127.0.0.1', 10000)
 
 try:
     sock.bind(UDP_address)
-    print('bind to socket:' + UDP_address)
+    print('bind to socket:', UDP_address)
 except Exception as e:
     print(e)
     arduino_Serial.close()

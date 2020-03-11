@@ -10,7 +10,7 @@ class UDP:
     def bind(self):
         try:
             self.sock.bind(self.udp_address)
-            print('bind to socket:' + self.udp_address)
+            print('bind to socket:', self.udp_address)
             return 0
         except Exception as e:
             print(e)
@@ -21,7 +21,10 @@ class UDP:
             self.sock.sendto(bytes(msg, 'utf-8'), target)
         except Exception as e:
             print(e)
-            self.sock.sendto(msg, target)
+            try:
+                self.sock.sendto(msg, target)
+            except Exception as e:
+                print(e)
 
     def recvfrom(self, target, timeout=0.01, iterations=5):
         self.sock.settimeout(timeout)
@@ -36,8 +39,13 @@ class UDP:
                     return msg.decode('utf-8')
             except Exception as e:
                 print(e)
-                print('didnt recv message from target:' + target + 'iteration num:' + i)
+                print('didnt recv message from target:', target, 'iteration num:', i)
         return None
+
+    def recv(self, timeout=None):
+        self.sock.settimeout(timeout)
+        msg, address = self.sock.recvfrom(1024)
+        return msg.decode('utf-8'), address
 
 
 class ArduinoCom:
