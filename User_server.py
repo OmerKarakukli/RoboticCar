@@ -3,10 +3,11 @@ from Communication import UDP
 # import socket
 #
 # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-UDP_address = ('192.168.1.22', 10001)
+UDP_user = ('192.168.1.22', 10001)
+UDP_ardu = ('127.0.0.1', 10003)
 #
 # try:
-#     sock.bind(UDP_address)
+#     sock.bind(UDP_user)
 # except Exception as e:
 #     print(e)
 #     exit()
@@ -21,14 +22,17 @@ UDP_address = ('192.168.1.22', 10001)
 #     sock.sendto(arduino_msg, address)
 
 
-UDP = UDP(UDP_address)
-UDP.bind()
-msg, address = UDP.recv()
+UDP1 = UDP(UDP_user)
+UDP2 = UDP(UDP_ardu)
+UDP1.bind()
+UDP2.bind()
+# msg, address = UDP1.recv()
 while True:
-    UDP.sendto(msg, ('127.0.0.1', 10000))
-    arduino_msg = UDP.recvfrom(('127.0.0.1', 10000), 0.05)
-    UDP.sendto(arduino_msg, address)
-    msg, address = UDP.recv()
-    while address == ('127.0.0.1', 10000):
-          msg, address = UDP.recv()
+    msg, address = UDP1.recv()
+    UDP2.sendto(msg, ('127.0.0.1', 10000))
+    arduino_msg = UDP2.recvfrom(('127.0.0.1', 10000), 0.05)
+    UDP1.sendto(arduino_msg, address)
+    # msg, address = UDP1.recv()
+    # while address == ('127.0.0.1', 10000):
+    #       msg, address = UDP1.recv()
 
