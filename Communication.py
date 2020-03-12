@@ -60,8 +60,12 @@ class ArduinoCom:
             print('connected to /dev/ttyACM0')
         except Exception as e:
             print(e)
-            self.serial = serial.Serial('/dev/ttyACM1', 115200)
-            print('connected to /dev/ttyACM1')
+            try:
+                self.serial = serial.Serial('/dev/ttyACM1', 115200)
+                print('connected to /dev/ttyACM1')
+            except Exception as e:
+                print(e)
+                exit()
 
     def send(self, msg):
         self.serial.write(bytes(msg + '\n', 'utf-8'))
