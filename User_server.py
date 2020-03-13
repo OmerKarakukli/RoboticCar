@@ -3,7 +3,8 @@ from Communication import UDP
 # import socket
 #
 # sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-UDP_user = ('192.168.1.22', 10001)
+# UDP_user = ('192.168.1.22', 10001)
+UDP_user = ('192.168.1.31', 10001)
 UDP_ardu = ('127.0.0.1', 10003)
 UDP_manager = ('127.0.0.1', 10005)
 #
