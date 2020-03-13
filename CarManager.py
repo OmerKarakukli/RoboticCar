@@ -4,8 +4,9 @@ from Communication import UDP
 
 state = 'auto'
 front_dist_value = 300  #400
-side_dist_value = 250   #300
+side_dist_value = 125   #250
 back_value = 200    #200
+back_value_sides = 200 #200
 
 UDP_address = ('127.0.0.1', 10002)
 User_server_UDP_address = ('127.0.0.1', 10004)
@@ -48,6 +49,12 @@ while True:
         dist = getDist()
         print(dist)
         if (dist[1]+dist[2])/2 < back_value:
+            UDP1.sendto('x', ('127.0.0.1', 10000))
+            UDP1.recv()
+            print("go Back")
+            sleep(0.25)
+
+        elif (dist[0]+dist[3])/2 < back_value_sides:
             UDP1.sendto('x', ('127.0.0.1', 10000))
             UDP1.recv()
             print("go Back")
