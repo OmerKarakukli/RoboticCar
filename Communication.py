@@ -50,7 +50,7 @@ class UDP:
 
 class ArduinoCom:
 
-    def __init__(self, tty0='/dev/ttyACM0', tty1='/dev/ttyACM0',baudrate=115200):
+    def __init__(self, tty0='/dev/ttyACM0', tty1='/dev/ttyACM0', baudrate=115200):
         import serial
         self.baudrate = baudrate
         self.tty0 = tty0
@@ -70,7 +70,7 @@ class ArduinoCom:
     def send(self, msg):
         self.serial.write(bytes(msg + '\n', 'utf-8'))
 
-    def recv(self, timeout=0.01, iterations = 5):
+    def recv(self, timeout=0.01, iterations=5):
         from time import sleep
         i = 1
         while True:
