@@ -1,6 +1,6 @@
-import serial
-from time import sleep
-import socket
+# import serial
+# from time import sleep
+# import socket
 from Communication import ArduinoCom, UDP
 
 UDP_global_address = ('127.0.0.1', 10000)
