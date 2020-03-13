@@ -8,3 +8,7 @@ while True:
     back_msg, address = sock.recvfrom(1024)
     back_msg = back_msg.decode('utf-8')
     print(back_msg)
+    # back_msg = back_msg.split(',')
+    # for i in range(0, len(back_msg)):
+    #     back_msg[i] = int(back_msg[i])
+    # print(back_msg)

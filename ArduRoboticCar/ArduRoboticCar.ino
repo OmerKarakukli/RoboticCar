@@ -7,13 +7,21 @@
 #define LeftMotDir1 3
 #define LeftMotDir2 2
 
-#define trig 52
-#define echo 53
 
 String serverIn = "";
 bool stringComplete = false;
 
-uint32_t frontDist;
+typedef struct HRC {
+  byte trig;
+  byte echo;
+  uint32_t dist;
+} HRC;
+
+HRC FL{52, 53, 0};
+HRC FR{50, 51, 0};
+HRC L{48, 49, 0};
+HRC R{46, 47, 0};
+HRC sensors[4] = {L, FL, FR, R};
 
 void setup() {
   // put your setup code here, to run once:
@@ -28,10 +36,11 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   analogWrite(RightMotPwm, 0);
   analogWrite(LeftMotPwm, 0);
-  pinMode(trig, OUTPUT);
-  digitalWrite(trig, LOW);
-  pinMode(echo, INPUT);
-  frontDist = 0;
+  for (byte i = 0; i < 4; i++) {
+    pinMode(sensors[i].trig, OUTPUT);
+    digitalWrite(sensors[i].trig, LOW);
+    pinMode(sensors[i].echo, INPUT);
+  }
 }
 
 void loop() {
@@ -91,9 +100,14 @@ void loop() {
       analogWrite(RightMotPwm, 0);
       analogWrite(LeftMotPwm, 0);
     }
-    else if (serverIn == "frontDist") {
-      updateFrontDist();
-      Serial.println(frontDist);
+    else if ((serverIn == "Dist") || (serverIn == "dist")) {
+      //updateFrontDist();
+      //Serial.println(frontDist);
+      updateDist(&L);
+      updateDist(&FL);
+      updateDist(&FR);
+      updateDist(&R);
+      Serial.print(L.dist); Serial.print(','); Serial.print(FL.dist); Serial.print(','); Serial.print(FR.dist); Serial.print(','); Serial.println(R.dist);
     }
     else {
       Serial.println("Unknown command");
@@ -101,7 +115,13 @@ void loop() {
     serverIn = "";
     stringComplete = false;
   }
+  //updateDist(&L);
+  //updateDist(&FL);
+  //updateDist(&FR);
+  //updateDist(&R);
+  //Serial.print(L.dist); Serial.print(','); Serial.print(FL.dist); Serial.print(','); Serial.print(FR.dist); Serial.print(','); Serial.println(R.dist);
   //updateFrontDist();
+  //Serial.println(frontDist);
 }
 
 void serialEvent() {
@@ -116,7 +136,25 @@ void serialEvent() {
   }
 }
 
-void updateFrontDist() {
+
+
+void updateDist(HRC *sen) {
+  digitalWrite(sen->trig, LOW);
+  delayMicroseconds(5);
+  digitalWrite(sen->trig, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(sen->trig, LOW);
+  uint32_t duration = pulseIn(sen->echo, HIGH, 1750); //250000
+  if (duration != 0) {
+    sen->dist = duration / 5.831;
+  } else {
+    sen->dist = 300;
+  }
+}
+
+
+
+/*void updateFrontDist() {
   digitalWrite(trig, LOW);
   delayMicroseconds(5);
   digitalWrite(trig, HIGH);
@@ -126,4 +164,4 @@ void updateFrontDist() {
   if (duration != 0) {
     frontDist = duration / 5.831;
   }
-}
+  }*/
