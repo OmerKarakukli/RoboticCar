@@ -44,8 +44,12 @@ class UDP:
 
     def recv(self, timeout=None):
         self.sock.settimeout(timeout)
-        msg, address = self.sock.recvfrom(1024)
-        return msg.decode('utf-8'), address
+        try:
+            msg, address = self.sock.recvfrom(1024)
+            return msg.decode('utf-8'), address
+        except Exception as e:
+            # print('no messages in socket:' + str(self.udp_address))
+            return None, None
 
 
 class ArduinoCom:

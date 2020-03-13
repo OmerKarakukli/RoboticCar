@@ -144,11 +144,11 @@ void updateDist(HRC *sen) {
   digitalWrite(sen->trig, HIGH);
   delayMicroseconds(10);
   digitalWrite(sen->trig, LOW);
-  uint32_t duration = pulseIn(sen->echo, HIGH, 1750); //250000
+  uint32_t duration = pulseIn(sen->echo, HIGH, 3500); //250000
   if (duration != 0) {
     sen->dist = duration / 5.831;
   } else {
-    sen->dist = 300;
+    sen->dist = 600;
   }
 }
 
