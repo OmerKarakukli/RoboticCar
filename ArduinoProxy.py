@@ -2,6 +2,7 @@
 # from time import sleep
 # import socket
 from Communication import ArduinoCom, UDP
+from time import sleep
 
 UDP_global_address = ('127.0.0.1', 10000)
 
@@ -11,11 +12,14 @@ UDP_global.bind()
 
 while True:
     msg, address = UDP_global.recv()
+    print(msg)
     if Ardu.send(msg) == 'arduino lost connection and re_init':
         UDP_global.sendto('arduino lost connection and re_init', address)
+        sleep(5)
         continue
     arduino_msg = Ardu.recv()
     UDP_global.sendto(arduino_msg, address)
+    print(arduino_msg)
 
 
 

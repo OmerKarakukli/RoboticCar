@@ -64,8 +64,7 @@ class ArduinoCom:
         self.baudrate = baudrate
         self.serial = None
         self.bindSuccess = False
-        while not self.bindSuccess:
-            self.bind()
+        self.re_init()
 
     def bind(self):
         try:
@@ -88,6 +87,7 @@ class ArduinoCom:
     def re_init(self):
         self.bindSuccess = False
         while not self.bindSuccess:
+            sleep(1)
             self.bind()
 
     def send(self, msg):
