@@ -1,7 +1,10 @@
+import socket
+import serial
+from time import sleep
+
 class UDP:
 
     def __init__(self, udp_address):
-        import socket
         self.IP = udp_address[0]
         self.PORT = udp_address[1]
         self.udp_address = udp_address
@@ -55,7 +58,6 @@ class UDP:
 class ArduinoCom:
 
     def __init__(self, tty0='/dev/ttyACM0', tty1='/dev/ttyACM0', baudrate=115200):
-        import serial
         self.baudrate = baudrate
         self.tty0 = tty0
         self.tty1 = tty1
@@ -75,7 +77,6 @@ class ArduinoCom:
         self.serial.write(bytes(msg + '\n', 'utf-8'))
 
     def recv(self, timeout=0.01, iterations=5):
-        from time import sleep
         i = 1
         while True:
             if i > iterations:
