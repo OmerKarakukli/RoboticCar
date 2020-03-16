@@ -39,7 +39,7 @@ while True:
         UDP1.sendto(manager_msg, address)
     else:
         UDP2.sendto(msg, ('127.0.0.1', 10000))
-        arduino_msg = UDP2.recvfrom(('127.0.0.1', 10000), 0.05)
+        arduino_msg = UDP2.recvfrom(('127.0.0.1', 10000), None)
         UDP1.sendto(arduino_msg, address)
     # msg, address = UDP1.recv()
     # while address == ('127.0.0.1', 10000):

@@ -18,12 +18,17 @@ UDP2.bind()
 
 
 def getDist():
-    UDP1.sendto('dist', ('127.0.0.1', 10000))
-    dist_array, address = UDP1.recv()
-    dist_array = dist_array.split(',')
-    for j in range(0, len(dist_array)):
-        dist_array[j] = int(dist_array[j])
-    return dist_array
+    try:
+        UDP1.sendto('dist', ('127.0.0.1', 10000))
+        dist_array, address = UDP1.recv()
+        dist_array = dist_array.split(',')
+        for j in range(0, len(dist_array)):
+            dist_array[j] = int(dist_array[j])
+        return dist_array
+
+    except Exception as e:
+        print(e)
+        return None
 
 
 while True:
@@ -47,6 +52,8 @@ while True:
 
     if state == 'auto':
         dist = getDist()
+        if dist is None:
+            continue
         print(dist)
         if (dist[1]+dist[2])/2 < back_value:
             UDP1.sendto('x', ('127.0.0.1', 10000))

@@ -11,7 +11,9 @@ UDP_global.bind()
 
 while True:
     msg, address = UDP_global.recv()
-    Ardu.send(msg)
+    if Ardu.send(msg) == 'arduino lost connection and re_init':
+        UDP_global.sendto('arduino lost connection and re_init', address)
+        continue
     arduino_msg = Ardu.recv()
     UDP_global.sendto(arduino_msg, address)
 

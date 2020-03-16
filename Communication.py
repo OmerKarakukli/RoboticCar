@@ -2,6 +2,7 @@ import socket
 import serial
 from time import sleep
 
+
 class UDP:
 
     def __init__(self, udp_address):
@@ -57,32 +58,55 @@ class UDP:
 
 class ArduinoCom:
 
-    def __init__(self, tty0='/dev/ttyACM0', tty1='/dev/ttyACM0', baudrate=115200):
-        self.baudrate = baudrate
+    def __init__(self, tty0='/dev/ttyACM0', tty1='/dev/ttyACM1', baudrate=115200):
         self.tty0 = tty0
         self.tty1 = tty1
+        self.baudrate = baudrate
+        self.serial = None
+        self.bindSuccess = False
+        while not self.bindSuccess:
+            self.bind()
+
+    def bind(self):
         try:
-            self.serial = serial.Serial('/dev/ttyACM0', 115200)
+            self.serial = serial.Serial(self.tty0, self.baudrate)
             print('connected to /dev/ttyACM0')
+            self.bindSuccess = True
+            return 0
         except Exception as e:
             print(e)
             try:
-                self.serial = serial.Serial('/dev/ttyACM1', 115200)
+                self.serial = serial.Serial(self.tty1, self.baudrate)
                 print('connected to /dev/ttyACM1')
+                self.bindSuccess = True
+                return 0
             except Exception as e:
                 print(e)
-                exit()
+                self.bindSuccess = False
+                return 1
+
+    def re_init(self):
+        self.bindSuccess = False
+        while not self.bindSuccess:
+            self.bind()
 
     def send(self, msg):
-        self.serial.write(bytes(msg + '\n', 'utf-8'))
+        try:
+            self.serial.write(bytes(msg + '\n', 'utf-8'))
+            return 0
 
-    def recv(self, timeout=0.01, iterations=5):
-        i = 1
-        while True:
-            if i > iterations:
-                break
-            i = i + 1
-            while self.serial.inWaiting() > 0:
-                return self.serial.readline().strip().decode("ascii")
-            sleep(timeout)
+        except Exception as e:
+            print(e)
+            self.re_init()
+            return 'arduino lost connection and re_init'
+
+    def recv(self):
+        try:
+            return self.serial.readline().strip().decode("ascii")
+
+        except Exception as e:
+            print(e)
+            self.re_init()
+            return 'arduino lost connection and re_init'
+
 
