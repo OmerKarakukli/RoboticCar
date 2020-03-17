@@ -6,7 +6,7 @@ state = 'auto'
 front_dist_value = 300  #400
 side_dist_value = 125   #250
 back_value = 200    #200
-back_value_sides = 100 #200
+back_value_sides = 100  #200
 
 UDP_address = ('127.0.0.1', 10002)
 User_server_UDP_address = ('127.0.0.1', 10004)
@@ -114,26 +114,3 @@ while True:
     else:
         # print('ready')
         sleep(0.001)
-
-
-
-
-
-
-# while True:
-#     # sock.sendto(bytes('frontDist', 'utf-8'), ('127.0.0.1', 10000))
-#     try:
-#         while True:
-#             frontDist, arduino_address = sock.recvfrom(1024)
-#             if arduino_address[1] == 10000:
-#                 break
-#         frontDist = int(frontDist.decode('utf-8'))
-#         print(frontDist)
-#         if frontDist < 250:
-#             sock.sendto(bytes('a', 'utf-8'), ('127.0.0.1', 10000))
-#             sleep(1)
-#         else:
-#             sock.sendto(bytes('w', 'utf-8'), ('127.0.0.1', 10000))
-#     except Exception as e:
-#         print(e)
-
