@@ -128,5 +128,3 @@ class ArduinoCom:
             print(e)
             self.init()
             return self.recv(msg)
-
-
