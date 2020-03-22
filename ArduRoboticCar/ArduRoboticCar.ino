@@ -2,10 +2,10 @@
 
 #define RightMotPwm 7
 #define LeftMotPwm 6
-#define RightMotDir1 5
-#define RightMotDir2 4
-#define LeftMotDir1 3
-#define LeftMotDir2 2
+#define RightMotDir1 4
+#define RightMotDir2 5
+#define LeftMotDir1 2
+#define LeftMotDir2 3
 
 
 String serverIn = "";
