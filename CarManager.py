@@ -1,12 +1,11 @@
-import socket
 from time import sleep
 from Communication import UDP
 
 state = 'auto'
-front_dist_value = 300  #400
-side_dist_value = 125   #250
-back_value = 200    #200
-back_value_sides = 100  #200
+front_dist_value = 300  # 400
+side_dist_value = 125   # 250
+back_value = 200    # 200
+back_value_sides = 100  # 200
 
 UDP_address = ('127.0.0.1', 10002)
 User_server_UDP_address = ('127.0.0.1', 10004)
