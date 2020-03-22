@@ -9,4 +9,3 @@ while True:
     back_msg, address = sock.recvfrom(1024)
     back_msg = back_msg.decode('utf-8')
     print(back_msg)
-

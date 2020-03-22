@@ -46,7 +46,7 @@ class UDP:
                     return msg.decode('utf-8')
             except Exception as e:
                 print(e)
-                print('didnt recv message from target:', target, 'iteration num:', i)
+                print('did not recv message from target:', target, 'iteration num:', i)
         self.sock.settimeout(oldtimeout)
         return None
 
@@ -57,7 +57,7 @@ class UDP:
             msg, address = self.sock.recvfrom(1024)
             self.sock.settimeout(oldtimeout)
             return msg.decode('utf-8'), address
-        except Exception as e:
+        except IOError:  # Exception as e:
             # print(str(e) + ',no messages in socket:' + str(self.udp_address))
             return None, None
 
