@@ -1,30 +1,13 @@
-import serial
-from time import sleep
-import socket
+from Communication import ArduinoCom, UDP
 
-try:
-    arduino_Serial = serial.Serial('/dev/ttyACM0', 115200)
-except Exception as e:
-    print(e)
-    arduino_Serial = serial.Serial('/dev/ttyACM1', 115200)
+UDP_global_address = ('127.0.0.1', 10000)
 
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-UDP_address = ('127.0.0.1', 10000)
+UDP_global = UDP(UDP_global_address)
+UDP_global.bind()
 
-try:
-    sock.bind(UDP_address)
-except Exception as e:
-    print(e)
-    arduino_Serial.close()
-    exit()
+Ardu = ArduinoCom()
 
 while True:
-    msg, address = sock.recvfrom(1024)
-    msg = msg.decode('utf-8')
-    arduino_Serial.write(bytes(msg + '\n', 'utf-8'))
-    arduinoIn = ""
-    sleep(0.1)
-    while arduino_Serial.inWaiting() > 0:
-        arduinoIn = arduino_Serial.readline().strip().decode("ascii")
-        sock.sendto(bytes(arduinoIn, 'utf-8'), address)
-
+    msg, address = UDP_global.recv()
+    arduino_msg = Ardu.recv(msg)
+    UDP_global.sendto(arduino_msg, address)
