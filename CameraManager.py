@@ -2,17 +2,21 @@ import io
 import socket
 import struct
 from PIL import Image
+import time
 
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)
 server_socket = socket.socket()
-server_socket.bind(('0.0.0.0', 8000))
+server_socket.bind(('192.168.1.189', 10100))
 server_socket.listen(0)
 
 # Accept a single connection and make a file-like object out of it
 connection = server_socket.accept()[0].makefile('rb')
 try:
+    startTime = time.time()
+    cnt = 0
     while True:
+        # startTime = time.time()
         # Read the length of the image as a 32-bit unsigned int. If the
         # length is zero, quit the loop
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -27,8 +31,17 @@ try:
         image_stream.seek(0)
         image = Image.open(image_stream)
         print('Image is %dx%d' % image.size)
-        image.verify()
-        print('Image is verified')
+        # image.verify()
+        # print('Image is verified')
+        # image = image.rotate(180)
+        image = image.transpose(Image.ROTATE_180)
+        #image.show()
+        # print(1/(time.time()-startTime))
+        cnt = cnt + 1
+        #image.close()
+
+
 finally:
     connection.close()
     server_socket.close()
+    print(cnt / (time.time() - startTime))
