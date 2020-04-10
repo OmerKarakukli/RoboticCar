@@ -12,11 +12,10 @@ server_socket.listen(0)
 
 # Accept a single connection and make a file-like object out of it
 connection = server_socket.accept()[0].makefile('rb')
+cnt = 0
+start_time = time.time()
 try:
-    startTime = time.time()
-    cnt = 0
     while True:
-        # startTime = time.time()
         # Read the length of the image as a 32-bit unsigned int. If the
         # length is zero, quit the loop
         image_len = struct.unpack('<L', connection.read(struct.calcsize('<L')))[0]
@@ -29,19 +28,18 @@ try:
         # Rewind the stream, open it as an image with PIL and do some
         # processing on it
         image_stream.seek(0)
-        image = Image.open(image_stream)
+        image = Image.open(image_stream).transpose(Image.ROTATE_180)
         print('Image is %dx%d' % image.size)
         # image.verify()
         # print('Image is verified')
         # image = image.rotate(180)
-        image = image.transpose(Image.ROTATE_180)
-        #image.show()
+        # image = image.transpose(Image.ROTATE_180)
+        # image.show()
         # print(1/(time.time()-startTime))
         cnt = cnt + 1
-        #image.close()
-
+        image.close()
 
 finally:
     connection.close()
     server_socket.close()
-    print(cnt / (time.time() - startTime))
+    print(cnt / (time.time() - start_time))
