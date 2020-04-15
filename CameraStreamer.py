@@ -3,6 +3,13 @@ import socket
 import struct
 import time
 import picamera
+from Communication import UDP
+
+UDP_manager = ('127.0.0.1', 10100)
+UDP_user = ('192.168.1.162', 10101)
+
+UDP1 = UDP(UDP_manager)
+UDP2 = UDP(UDP_user)
 
 # Connect a client socket to my_server:8000 (change my_server to the
 # hostname of your server)
