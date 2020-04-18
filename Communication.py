@@ -61,6 +61,17 @@ class UDP:
             # print(str(e) + ',no messages in socket:' + str(self.udp_address))
             return None, None
 
+    def recv_bytes_io(self, timeout=None):
+        oldtimeout = self.sock.gettimeout()
+        self.sock.settimeout(timeout)
+        try:
+            msg, address = self.sock.recvfrom(1024)
+            self.sock.settimeout(oldtimeout)
+            return msg, address
+        except IOError:  # Exception as e:
+            # print(str(e) + ',no messages in socket:' + str(self.udp_address))
+            return None, None
+
 
 class ArduinoCom:
 

@@ -5,23 +5,33 @@ from PIL import Image
 from time import sleep
 from Communication import UDP
 
-# UDP_streamer = ('127.0.0.1', 10100)
-UDP_streamer = ('192.168.1.162', 10101)
-UDP_address = ('127.0.0.1', 10103)
+local_UDP_address = ('192.168.1.162', 10102)
+remote_TCP_address = ('192.168.1.162', 10101)
+remote_UDP_address = ('192.168.1.162', 10100)   # CameraStreamer UDP
 
-UDP_local = UDP(UDP_address)
-UDP_local.bind()
+local_UDP = UDP(local_UDP_address)
+local_UDP.bind()
+
+remote_TCP = socket.socket()
+remote_TCP.connect(remote_TCP_address)
+stream_connection = remote_TCP.makefile('rb')
+
+# create the steam from bytesIO
+stream = io.BytesIO()
+stream.seek(0)
+stream.truncate()
 
 while True:
-    UDP_local.sendto('10103', UDP_streamer)
-    image_len = struct.unpack('<L', UDP_local.recv(bytes_num=struct.calcsize('<L'))[0])[0]
-    print(image_len)
-    image_stream = io.BytesIO()
-    image_stream.write(UDP_local.recv_bytes(bytes_num=image_len))
-    image_stream.seek(0)
-    image = Image.open(image_stream).transpose(Image.ROTATE_180)
-    print('Image is %dx%d' % image.size)
 
+    local_UDP.sendto('getFrame', remote_UDP_address)
+    image_len = struct.unpack('<L', local_UDP.recv_bytes_io(struct.calcsize('<L'))[0])[0]
+    print('image_len = ', image_len)
+    stream.write(stream_connection.read(image_len))
+    stream.seek(0)
+    image = Image.open(stream)  # .transpose(Image.ROTATE_180)
+    # image.show()
+    print('Image is %dx%d' % image.size)
+    print(image)
 
 # Start a socket listening for connections on 0.0.0.0:8000 (0.0.0.0 means
 # all interfaces)

@@ -44,6 +44,6 @@ while True:
         print('image_len = ', image_len)
         stream_connection.write(stream.read())
         stream_connection.flush()
-        local_UDP.sendto(str(struct.pack('<L', image_len)), client_address)
+        local_UDP.sendto(struct.pack('<L', image_len), client_address)
         stream.seek(0)
         stream.truncate()
