@@ -7,14 +7,15 @@ from Communication import UDP
 
 # UDP_streamer = ('127.0.0.1', 10100)
 UDP_streamer = ('192.168.1.162', 10101)
-UDP_address = ('127.0.0.1', 10102)
+UDP_address = ('127.0.0.1', 10103)
 
 UDP_local = UDP(UDP_address)
 UDP_local.bind()
 
 while True:
-    UDP_local.sendto('getFrame', UDP_streamer)
-    image_len = struct.unpack('<L', UDP_local.recv_bytes(bytes_num=struct.calcsize('<L'))[0])[0]
+    UDP_local.sendto('10103', UDP_streamer)
+    image_len = struct.unpack('<L', UDP_local.recv(bytes_num=struct.calcsize('<L'))[0])[0]
+    print(image_len)
     image_stream = io.BytesIO()
     image_stream.write(UDP_local.recv_bytes(bytes_num=image_len))
     image_stream.seek(0)
