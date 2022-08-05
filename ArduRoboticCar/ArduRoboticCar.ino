@@ -7,21 +7,55 @@
 #define LeftMotDir1 2
 #define LeftMotDir2 3
 
-
 String serverIn = "";
 bool stringComplete = false;
 
-typedef struct HRC {
-  byte trig;
-  byte echo;
-  uint32_t dist;
-} HRC;
+char output_buffer[128];
 
-HRC FL{52, 53, 0};
-HRC FR{50, 51, 0};
-HRC L{48, 49, 0};
-HRC R{46, 47, 0};
-HRC sensors[4] = {L, FL, FR, R};
+class HRC {
+private:
+  uint8_t _trig_pin{};
+  uint8_t _echo_pin{};
+  uint32_t _cur_dist{};
+public:
+  HRC(uint8_t trig_pin, uint8_t echo_pin)
+  : _trig_pin(trig_pin)
+  , _echo_pin(echo_pin)
+  {
+
+  }
+  
+  void init() {
+    pinMode(_trig_pin, OUTPUT);
+    digitalWrite(_trig_pin, LOW);
+    pinMode(_echo_pin, INPUT);    
+  }
+  
+  uint8_t get_trig_pin() { return _trig_pin; }
+  uint8_t get_echo_pin() { return _echo_pin; }
+  uint32_t get_cur_dist() { return _cur_dist; }
+
+  void updateDist() {
+    digitalWrite(_trig_pin, LOW);
+    delayMicroseconds(5);
+    digitalWrite(_trig_pin, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(_trig_pin, LOW);
+    uint32_t duration = pulseIn(_echo_pin, HIGH, 3500); //250000
+    if (duration != 0) {
+      _cur_dist = duration / 5.831;
+    
+    } else {
+      _cur_dist = 600;
+    }
+  }
+
+};
+
+HRC FL{52, 53};
+HRC FR{50, 51};
+HRC L{48, 49};
+HRC R{46, 47};
 
 void setup() {
   // put your setup code here, to run once:
@@ -36,11 +70,10 @@ void setup() {
   pinMode(ledPin, OUTPUT);
   analogWrite(RightMotPwm, 0);
   analogWrite(LeftMotPwm, 0);
-  for (byte i = 0; i < 4; i++) {
-    pinMode(sensors[i].trig, OUTPUT);
-    digitalWrite(sensors[i].trig, LOW);
-    pinMode(sensors[i].echo, INPUT);
-  }
+  FL.init();
+  FR.init();
+  L.init();
+  R.init();
 }
 
 void loop() {
@@ -103,11 +136,12 @@ void loop() {
     else if ((serverIn == "Dist") || (serverIn == "dist")) {
       //updateFrontDist();
       //Serial.println(frontDist);
-      updateDist(&L);
-      updateDist(&FL);
-      updateDist(&FR);
-      updateDist(&R);
-      Serial.print(L.dist); Serial.print(','); Serial.print(FL.dist); Serial.print(','); Serial.print(FR.dist); Serial.print(','); Serial.println(R.dist);
+      L.updateDist();
+      FL.updateDist();
+      FR.updateDist();
+      R.updateDist();
+      sprintf_P(output_buffer, "%d,%d,%d,%d\n", L.get_cur_dist(), FL.get_cur_dist(), FR.get_cur_dist(), R.get_cur_dist());
+      Serial.write(output_buffer);
     }
     else {
       Serial.println("Unknown command");
@@ -115,13 +149,6 @@ void loop() {
     serverIn = "";
     stringComplete = false;
   }
-  //updateDist(&L);
-  //updateDist(&FL);
-  //updateDist(&FR);
-  //updateDist(&R);
-  //Serial.print(L.dist); Serial.print(','); Serial.print(FL.dist); Serial.print(','); Serial.print(FR.dist); Serial.print(','); Serial.println(R.dist);
-  //updateFrontDist();
-  //Serial.println(frontDist);
 }
 
 void serialEvent() {
@@ -135,33 +162,3 @@ void serialEvent() {
     //delay(5);
   }
 }
-
-
-
-void updateDist(HRC *sen) {
-  digitalWrite(sen->trig, LOW);
-  delayMicroseconds(5);
-  digitalWrite(sen->trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(sen->trig, LOW);
-  uint32_t duration = pulseIn(sen->echo, HIGH, 3500); //250000
-  if (duration != 0) {
-    sen->dist = duration / 5.831;
-  } else {
-    sen->dist = 600;
-  }
-}
-
-
-
-/*void updateFrontDist() {
-  digitalWrite(trig, LOW);
-  delayMicroseconds(5);
-  digitalWrite(trig, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trig, LOW);
-  uint32_t duration = pulseIn(echo, HIGH, 250000);
-  if (duration != 0) {
-    frontDist = duration / 5.831;
-  }
-  }*/
